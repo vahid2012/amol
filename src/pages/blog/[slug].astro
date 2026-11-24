@@ -1,0 +1,127 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import ServiceImage from '../../components/ServiceImage.astro';
+import CTASection from '../../components/CTASection.astro';
+import { ALL_BLOG_POSTS as BLOG_POSTS, SITE } from '../../data/site';
+
+export function getStaticPaths() {
+  return BLOG_POSTS.map((post) => ({
+    params: { slug: post.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const post = BLOG_POSTS.find((p) => p.slug === slug);
+if (!post) throw new Error(`Post not found: ${slug}`);
+
+const persianMonths: Record<string, string> = {
+  '01': 'فروردین', '02': 'اردیبهشت', '03': 'خرداد', '04': 'تیر',
+  '05': 'مرداد', '06': 'شهریور', '07': 'مهر', '08': 'آبان',
+  '09': 'آذر', '10': 'دی', '11': 'بهمن', '12': 'اسفند',
+};
+
+function formatDate(dateStr: string): string {
+  const [y, m] = dateStr.split('-');
+  return `${persianMonths[m] || ''} ${y}`;
+}
+
+const relatedPosts = BLOG_POSTS.filter((p) => p.slug !== slug && p.category === post.category).slice(0, 3);
+const otherPosts = BLOG_POSTS.filter((p) => p.slug !== slug && p.category !== post.category).slice(0, 3);
+const allRelated = [...relatedPosts, ...otherPosts].slice(0, 3);
+
+function renderContent(content: string): string {
+  return content
+    .split('\n')
+    .map((line) => {
+      if (line.startsWith('## ')) {
+        return `<h2 class="mt-8 mb-4 text-xl font-bold text-foreground md:text-2xl">${line.replace('## ', '')}</h2>`;
+      }
+      if (line.startsWith('# ')) {
+        return `<h1 class="mt-8 mb-4 text-2xl font-bold text-foreground">${line.replace('# ', '')}</h1>`;
+      }
+      if (line.trim() === '') {
+        return '';
+      }
+      return `<p class="mb-4 text-sm leading-relaxed text-muted-foreground md:text-base">${line}</p>`;
+    })
+    .join('\n');
+}
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: post.title,
+  description: post.excerpt,
+  datePublished: post.date,
+  author: { '@type': 'Organization', name: 'آمل سرویس' },
+  publisher: { '@type': 'Organization', name: 'آمل سرویس' },
+};
+---
+
+<Layout
+  title={`${post.title} | مقالات آمل سرویس`}
+  description={post.excerpt}
+  jsonLd={jsonLd}
+>
+  <Breadcrumb items={[{ label: 'مقالات', href: '/blog/' }, { label: post.title }]} />
+
+  <article class="container-app pt-6 md:pt-8">
+    <div class="mx-auto max-w-3xl">
+      <div class="mb-4 flex items-center gap-2">
+        <span class="rounded-md bg-secondary/10 px-2.5 py-1 text-xs font-semibold text-secondary">{post.category}</span>
+        <span class="text-xs text-muted-foreground">{formatDate(post.date)}</span>
+      </div>
+      <h1 class="text-2xl font-extrabold leading-tight text-foreground md:text-3xl lg:text-4xl">{post.title}</h1>
+      <p class="mt-4 text-base leading-relaxed text-muted-foreground md:text-lg">{post.excerpt}</p>
+    </div>
+  </article>
+
+  <section class="container-app section-pad">
+    <div class="mx-auto max-w-3xl">
+      <div class="mb-8 overflow-hidden rounded-xl border border-border bg-muted/30">
+        <ServiceImage type={post.image} alt={post.title} class="h-[300px] w-full md:h-[400px]" />
+      </div>
+
+      <div class="space-y-0" set:html={renderContent(post.content)} />
+
+      <div class="mt-8 flex flex-col gap-3 rounded-xl bg-primary p-6 text-center sm:flex-row sm:items-center sm:justify-between">
+        <div class="text-right">
+          <p class="text-sm text-blue-100/80">نیاز به تعمیر دارید؟</p>
+          <p class="text-lg font-bold text-white">با آمل سرویس تماس بگیرید</p>
+        </div>
+        <div class="flex flex-col gap-2 sm:flex-row">
+          <a href={SITE.telLink} class="inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-orange-600">
+            تماس با آمل سرویس: <span dir="ltr">{SITE.phoneDisplay}</span>
+          </a>
+          <a href={SITE.whatsappLink} target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 rounded-lg border border-green-400 bg-green-500 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-green-600">
+            واتساپ
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {allRelated.length > 0 && (
+    <section class="bg-muted/50 py-12 md:py-16">
+      <div class="container-app">
+        <h2 class="mb-6 text-xl font-bold text-foreground md:text-2xl">مقالات مرتبط</h2>
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {allRelated.map((p) => (
+            <a href={`/blog/${p.slug}/`} class="group flex flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-all hover:shadow-md">
+              <div class="aspect-[3/2] bg-primary/5">
+                <ServiceImage type={p.image} alt={p.title} class="h-full w-full" />
+              </div>
+              <div class="p-4">
+                <span class="text-xs font-semibold text-secondary">{p.category}</span>
+                <h3 class="mt-1 text-sm font-bold leading-snug text-foreground group-hover:text-secondary">{p.title}</h3>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <CTASection variant="compact" />
+</Layout>

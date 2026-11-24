@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://amol-service.ir/sitemap.xml

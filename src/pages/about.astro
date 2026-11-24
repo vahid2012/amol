@@ -1,0 +1,122 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import ServiceIcon from '../components/ServiceIcon.astro';
+import CTASection from '../components/CTASection.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import { SITE, SERVICES, CITIES } from '../data/site';
+
+const values = [
+  { icon: 'search', title: 'عیب‌یابی اصولی', desc: 'پیش از هر تعمیر، مشکل دستگاه به‌دقت بررسی و تشخیص داده می‌شود تا تعمیر درست انجام شود.' },
+  { icon: 'wrench', title: 'تعمیر تخصصی', desc: 'هر نوع دستگاه توسط فردی که با آن آشناست بررسی می‌شود تا کیفیت تعمیر حفظ شود.' },
+  { icon: 'users', title: 'ارتباط شفاف با مشتری', desc: 'هزینه تعمیر پیش از انجام کار به شما اعلام می‌شود تا با آگاهی کامل تصمیم بگیرید.' },
+  { icon: 'map-pin', title: 'خدمات در منطقه', desc: 'در آمل و شهرهای اطراف، به‌شرط امکان رسیدن به محل دستگاه، خدمات ارائه می‌شود.' },
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  name: 'درباره آمل سرویس',
+  url: `${SITE.domain}/about/`,
+};
+---
+
+<Layout
+  title="درباره آمل سرویس | تعمیر لوازم خانگی در آمل"
+  description="آمل سرویس در زمینه عیب‌یابی و تعمیر لوازم خانگی در آمل و شهرهای اطراف فعالیت می‌کند. آشنایی با نوع خدمات، حوزه فعالیت و نحوه ثبت درخواست."
+  jsonLd={jsonLd}
+>
+  <Breadcrumb items={[{ label: 'درباره ما' }]} />
+
+  <!-- Hero -->
+  <section class="container-app pt-6 md:pt-8">
+    <div class="mx-auto max-w-3xl space-y-5 text-center">
+      <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-white shadow-lg">
+        <ServiceIcon name="info" class="h-8 w-8" />
+      </div>
+      <h1 class="text-2xl font-extrabold leading-tight text-foreground md:text-3xl lg:text-4xl">درباره آمل سرویس</h1>
+      <p class="text-base leading-relaxed text-muted-foreground md:text-lg">
+        آمل سرویس در زمینه عیب‌یابی و تعمیر لوازم خانگی و تجهیزات الکترونیکی در آمل و شهرهای اطراف فعالیت می‌کند. هدف ما ارائه خدمات تعمیراتی به‌صورت اصولی و شفاف است تا مشتریان بتوانند با اطمینان دستگاه‌های خود را تعمیر کنند.
+      </p>
+    </div>
+  </section>
+
+  <!-- What We Do -->
+  <section class="container-app section-pad">
+    <div class="mx-auto max-w-4xl space-y-6">
+      <SectionHeading title="نوع خدمات" subtitle="خدمات آمل سرویس شامل عیب‌یابی و تعمیر انواع لوازم خانگی است" />
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {SERVICES.map((service) => (
+          <a href={`/${service.slug}/`} class="flex items-center gap-3 rounded-lg border border-border bg-card p-4 shadow-sm transition-all hover:shadow-md">
+            <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary/5 text-primary">
+              <ServiceIcon name={service.icon} class="h-5 w-5" />
+            </div>
+            <span class="text-sm font-semibold text-foreground">{service.title}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section class="bg-muted/50 py-12 md:py-16">
+    <div class="container-app">
+      <SectionHeading title="اهمیت عیب‌یابی اصولی" subtitle="چرا عیب‌یابی درست پیش از تعمیر اهمیت دارد" center />
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {values.map((v) => (
+          <div class="flex flex-col items-start gap-3 rounded-xl border border-border bg-card p-6 shadow-sm">
+            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary/10 text-secondary">
+              <ServiceIcon name={v.icon} class="h-6 w-6" />
+            </div>
+            <h3 class="text-base font-bold text-foreground">{v.title}</h3>
+            <p class="text-sm leading-relaxed text-muted-foreground">{v.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Service Area -->
+  <section class="container-app section-pad">
+    <SectionHeading title="حوزه فعالیت" subtitle="مناطقی که خدمات آمل سرویس در آن‌ها ارائه می‌شود" center />
+    <div class="flex flex-wrap items-center justify-center gap-3">
+      {CITIES.map((city) => (
+        <a href={`/${city.slug}/`} class="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground/80 transition-colors hover:border-secondary hover:text-secondary">
+          <ServiceIcon name="map-pin" class="h-4 w-4" />
+          {city.name}
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- How to Request -->
+  <section class="bg-muted/50 py-12 md:py-16">
+    <div class="container-app">
+      <SectionHeading title="نحوه ثبت درخواست" subtitle="برای ثبت درخواست تعمیر، کافی است یکی از راه‌های زیر را انتخاب کنید" center />
+      <div class="mx-auto grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-2">
+        <div class="flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-6 text-center shadow-sm">
+          <div class="flex h-14 w-14 items-center justify-center rounded-full bg-accent/10 text-accent">
+            <ServiceIcon name="phone" class="h-7 w-7" />
+          </div>
+          <h3 class="text-lg font-bold text-foreground">تماس مستقیم</h3>
+          <p class="text-sm text-muted-foreground">با شماره {SITE.phoneDisplay} تماس بگیرید و مشکل دستگاه خود را توضیح دهید.</p>
+          <a href={SITE.telLink} class="mt-2 inline-flex items-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-orange-600">
+            تماس با آمل سرویس: <span dir="ltr">{SITE.phoneDisplay}</span>
+          </a>
+        </div>
+        <div class="flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-6 text-center shadow-sm">
+          <div class="flex h-14 w-14 items-center justify-center rounded-full bg-green-100 text-green-600">
+            <ServiceIcon name="whatsapp" class="h-7 w-7" />
+          </div>
+          <h3 class="text-lg font-bold text-foreground">پیام واتساپ</h3>
+          <p class="text-sm text-muted-foreground">در واتساپ پیام بدهید و مشکل دستگاه، شهر و منطقه خود را ذکر کنید.</p>
+          <a href={SITE.whatsappLink} target="_blank" rel="noopener noreferrer" class="mt-2 inline-flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-5 py-2.5 text-sm font-bold text-green-700 transition-colors hover:bg-green-100">
+            ارسال پیام واتساپ
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CTASection />
+</Layout>

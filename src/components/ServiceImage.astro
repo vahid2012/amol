@@ -1,0 +1,135 @@
+---
+interface Props {
+  type: string;
+  class?: string;
+  alt: string;
+}
+
+const { type, class: className = '', alt } = Astro.props;
+
+const illustrations: Record<string, string> = {
+  refrigerator: `
+    <rect x="40" y="10" width="80" height="140" rx="6" fill="#e8f0fb" stroke="#2a8be0" stroke-width="2"/>
+    <rect x="40" y="70" width="80" height="2" fill="#2a8be0"/>
+    <rect x="48" y="20" width="64" height="44" rx="3" fill="#d0e5f7"/>
+    <rect x="48" y="78" width="64" height="64" rx="3" fill="#d0e5f7"/>
+    <circle cx="110" cy="45" r="2" fill="#2a8be0"/>
+    <circle cx="110" cy="100" r="2" fill="#2a8be0"/>
+    <line x1="52" y1="30" x2="62" y2="30" stroke="#2a8be0" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="52" y1="38" x2="58" y2="38" stroke="#2a8be0" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="52" y1="90" x2="62" y2="90" stroke="#2a8be0" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="52" y1="100" x2="58" y2="100" stroke="#2a8be0" stroke-width="1.5" stroke-linecap="round"/>
+  `,
+  'washing-machine': `
+    <rect x="40" y="15" width="80" height="130" rx="6" fill="#e8f0fb" stroke="#2a8be0" stroke-width="2"/>
+    <rect x="48" y="22" width="64" height="12" rx="2" fill="#d0e5f7"/>
+    <circle cx="54" cy="28" r="2" fill="#2a8be0"/>
+    <circle cx="62" cy="28" r="2" fill="#2a8be0"/>
+    <circle cx="106" cy="28" r="2" fill="#f97316"/>
+    <circle cx="80" cy="85" r="30" fill="#fff" stroke="#2a8be0" stroke-width="2"/>
+    <circle cx="80" cy="85" r="20" fill="#d0e5f7"/>
+    <circle cx="80" cy="85" r="8" fill="#2a8be0" opacity="0.6"/>
+  `,
+  'air-conditioner': `
+    <rect x="20" y="30" width="120" height="40" rx="5" fill="#e8f0fb" stroke="#2a8be0" stroke-width="2"/>
+    <line x1="30" y1="45" x2="130" y2="45" stroke="#2a8be0" stroke-width="1.5"/>
+    <line x1="30" y1="55" x2="130" y2="55" stroke="#2a8be0" stroke-width="1.5"/>
+    <line x1="50" y1="80" x2="50" y2="95" stroke="#2a8be0" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="80" y1="80" x2="80" y2="100" stroke="#2a8be0" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="110" y1="80" x2="110" y2="95" stroke="#2a8be0" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M45 85 Q50 80 55 85" stroke="#f97316" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M75 90 Q80 85 85 90" stroke="#f97316" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M105 85 Q110 80 115 85" stroke="#f97316" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  `,
+  package: `
+    <rect x="30" y="20" width="100" height="100" rx="6" fill="#e8f0fb" stroke="#2a8be0" stroke-width="2"/>
+    <rect x="40" y="30" width="80" height="30" rx="3" fill="#d0e5f7"/>
+    <circle cx="80" cy="75" r="20" fill="none" stroke="#2a8be0" stroke-width="2"/>
+    <circle cx="80" cy="75" r="12" fill="none" stroke="#2a8be0" stroke-width="1.5"/>
+    <circle cx="80" cy="75" r="4" fill="#f97316"/>
+    <line x1="55" y1="110" x2="55" y2="130" stroke="#2a8be0" stroke-width="2" stroke-linecap="round"/>
+    <line x1="105" y1="110" x2="105" y2="130" stroke="#2a8be0" stroke-width="2" stroke-linecap="round"/>
+    <rect x="48" y="125" width="14" height="6" rx="1" fill="#2a8be0"/>
+    <rect x="98" y="125" width="14" height="6" rx="1" fill="#2a8be0"/>
+  `,
+  tv: `
+    <rect x="20" y="25" width="120" height="80" rx="5" fill="#1a2c4e" stroke="#2a8be0" stroke-width="2"/>
+    <rect x="28" y="32" width="104" height="66" rx="2" fill="#2a8be0" opacity="0.15"/>
+    <path d="M55 65 L70 50 L85 70 L100 45 L115 60" stroke="#2a8be0" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <circle cx="115" cy="45" r="3" fill="#f97316"/>
+    <rect x="65" y="110" width="30" height="4" rx="1" fill="#2a8be0"/>
+    <rect x="55" y="114" width="50" height="6" rx="2" fill="#2a8be0"/>
+  `,
+  microwave: `
+    <rect x="20" y="30" width="120" height="70" rx="5" fill="#e8f0fb" stroke="#2a8be0" stroke-width="2"/>
+    <rect x="28" y="38" width="70" height="54" rx="3" fill="#fff" stroke="#2a8be0" stroke-width="1.5"/>
+    <circle cx="63" cy="65" r="15" fill="none" stroke="#f97316" stroke-width="1.5" opacity="0.6"/>
+    <circle cx="63" cy="65" r="8" fill="none" stroke="#f97316" stroke-width="1" opacity="0.4"/>
+    <line x1="105" y1="42" x2="132" y2="42" stroke="#2a8be0" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="105" y1="52" x2="132" y2="52" stroke="#2a8be0" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="105" y1="62" x2="132" y2="62" stroke="#2a8be0" stroke-width="1.5" stroke-linecap="round"/>
+    <rect x="108" y="72" width="20" height="10" rx="2" fill="#f97316" opacity="0.8"/>
+  `,
+  hero: `
+    <rect x="30" y="20" width="60" height="120" rx="5" fill="#e8f0fb" stroke="#2a8be0" stroke-width="2"/>
+    <line x1="30" y1="65" x2="90" y2="65" stroke="#2a8be0" stroke-width="1.5"/>
+    <circle cx="82" cy="42" r="2" fill="#2a8be0"/>
+    <circle cx="82" cy="85" r="2" fill="#2a8be0"/>
+    <rect x="110" y="25" width="80" height="100" rx="5" fill="#e8f0fb" stroke="#2a8be0" stroke-width="2"/>
+    <rect x="118" y="32" width="64" height="12" rx="2" fill="#d0e5f7"/>
+    <circle cx="150" cy="80" r="25" fill="#fff" stroke="#2a8be0" stroke-width="2"/>
+    <circle cx="150" cy="80" r="15" fill="#d0e5f7"/>
+    <circle cx="150" cy="80" r="6" fill="#2a8be0" opacity="0.6"/>
+    <g transform="translate(210, 30)">
+      <rect x="0" y="0" width="90" height="55" rx="4" fill="#e8f0fb" stroke="#2a8be0" stroke-width="2"/>
+      <line x1="8" y1="12" x2="82" y2="12" stroke="#2a8be0" stroke-width="1"/>
+      <line x1="8" y1="22" x2="82" y2="22" stroke="#2a8be0" stroke-width="1"/>
+      <line x1="20" y1="40" x2="20" y2="50" stroke="#2a8be0" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="45" y1="40" x2="45" y2="55" stroke="#2a8be0" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="70" y1="40" x2="70" y2="50" stroke="#2a8be0" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M15 42 Q20 37 25 42" stroke="#f97316" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <path d="M40 42 Q45 37 50 42" stroke="#f97316" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <path d="M65 42 Q70 37 75 42" stroke="#f97316" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(210, 100)">
+      <rect x="0" y="0" width="70" height="50" rx="4" fill="#e8f0fb" stroke="#2a8be0" stroke-width="2"/>
+      <rect x="6" y="6" width="40" height="30" rx="2" fill="#fff" stroke="#2a8be0" stroke-width="1"/>
+      <circle cx="26" cy="21" r="8" fill="none" stroke="#f97316" stroke-width="1" opacity="0.5"/>
+      <line x1="52" y1="10" x2="62" y2="10" stroke="#2a8be0" stroke-width="1"/>
+      <line x1="52" y1="18" x2="62" y2="18" stroke="#2a8be0" stroke-width="1"/>
+      <line x1="52" y1="26" x2="62" y2="26" stroke="#2a8be0" stroke-width="1"/>
+    </g>
+    <g transform="translate(15, 155)">
+      <path d="M0 10 L3 0 L6 10 L9 4 L12 12 L15 6 L18 14 L21 8 L24 16 L27 10 L30 18 L33 12 L36 20" stroke="#f97316" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </g>
+  `,
+  tools: `
+    <g transform="translate(40, 30)">
+      <path d="M20 20 L60 20 L65 30 L60 40 L20 40 Z" fill="#f97316" opacity="0.8"/>
+      <rect x="20" y="40" width="40" height="50" rx="3" fill="#2a8be0" opacity="0.7"/>
+      <circle cx="40" cy="25" r="3" fill="#fff"/>
+      <g transform="translate(80, 50) rotate(45)">
+        <rect x="0" y="0" width="8" height="40" rx="2" fill="#666"/>
+        <rect x="-5" y="35" width="18" height="15" rx="2" fill="#888"/>
+      </g>
+    </g>
+  `,
+  city: `
+    <g transform="translate(20, 20)">
+      <path d="M10 120 L10 50 L40 30 L40 50 L70 30 L70 50 L100 30 L100 120 Z" fill="#e8f0fb" stroke="#2a8be0" stroke-width="2"/>
+      <rect x="20" y="60" width="12" height="15" rx="1" fill="#2a8be0" opacity="0.5"/>
+      <rect x="45" y="60" width="12" height="15" rx="1" fill="#2a8be0" opacity="0.5"/>
+      <rect x="75" y="60" width="12" height="15" rx="1" fill="#2a8be0" opacity="0.5"/>
+      <rect x="20" y="85" width="12" height="15" rx="1" fill="#2a8be0" opacity="0.5"/>
+      <rect x="45" y="85" width="12" height="15" rx="1" fill="#2a8be0" opacity="0.5"/>
+      <rect x="75" y="85" width="12" height="15" rx="1" fill="#2a8be0" opacity="0.5"/>
+      <path d="M110 120 Q115 110 120 120" stroke="#f97316" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M125 120 Q130 105 135 120" stroke="#f97316" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </g>
+  `,
+};
+---
+
+<div class={`flex items-center justify-center ${className}`} role="img" aria-label={alt}>
+  <svg viewBox="0 0 300 200" class="h-full w-full" fill="none" xmlns="http://www.w3.org/2000/svg" set:html={illustrations[type] || illustrations.hero} />
+</div>

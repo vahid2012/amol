@@ -1,0 +1,187 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import ServiceIcon from '../../components/ServiceIcon.astro';
+import ServiceImage from '../../components/ServiceImage.astro';
+import CTASection from '../../components/CTASection.astro';
+import FAQ from '../../components/FAQ.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import { SITE, BRAND_PAGES, TV_REPAIR_BRANDS, SERVICES, CITIES, ALL_BLOG_POSTS as BLOG_POSTS } from '../../data/site';
+
+export function getStaticPaths() {
+  return BRAND_PAGES.map((brand) => ({
+    params: { slug: brand.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const brand = BRAND_PAGES.find((b) => b.slug === slug);
+if (!brand) throw new Error(`Brand not found: ${slug}`);
+
+const faqs = [
+  { q: `آیا لوازم خانگی ${brand.name} قابل تعمیر هستند؟`, a: `بله، لوازم خانگی برند ${brand.name} قابل عیب‌یابی و تعمیر هستند. قطعات بیشتر مدل‌ها در بازار در دسترس است.` },
+  { q: `آیا آمل سرویس نمایندگی رسمی ${brand.name} است؟`, a: `خیر، آمل سرویس نمایندگی رسمی هیچ برندی نیست. خدمات ما شامل عیب‌یابی و تعمیر لوازم خانگی برندهای مختلف است.` },
+  { q: `هزینه تعمیر لوازم خانگی ${brand.name} چقدر است؟`, a: `هزینه بستگی به نوع دستگاه و خرابی دارد. پس از عیب‌یابی، هزینه تعمیر پیش از انجام کار به شما اعلام می‌شود.` },
+  { q: `چه مدت طول می‌کشد لوازم خانگی ${brand.name} تعمیر شود؟`, a: `خرابی‌های ساده در همان روز رفع می‌شوند. تعمیرات تخصصی‌تر ممکن است زمان بیشتری نیاز داشته باشند.` },
+];
+
+const relatedBrands = BRAND_PAGES.filter((b) => b.slug !== slug);
+const relatedTvBrands = TV_REPAIR_BRANDS.filter((t) => t.brandEn.toLowerCase() === brand.nameEn.toLowerCase());
+const relatedPosts = BLOG_POSTS.filter((p) => p.category === 'تلویزیون' || p.category === 'یخچال').slice(0, 3);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: `تعمیر لوازم خانگی ${brand.name}`,
+  description: brand.metaDescription,
+  provider: { '@type': 'LocalBusiness', name: 'آمل سرویس', telephone: SITE.phone },
+  areaServed: CITIES.map((c) => c.name),
+};
+---
+
+<Layout title={brand.seoTitle} description={brand.metaDescription} jsonLd={jsonLd}>
+  <Breadcrumb items={[{ label: 'برندها', href: '/#brands' }, { label: brand.name }]} />
+
+  <section class="container-app pt-6 md:pt-8">
+    <div class="grid grid-cols-1 items-center gap-8 lg:grid-cols-2">
+      <div class="space-y-5">
+        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-white shadow-lg">
+          <ServiceIcon name={brand.icon} class="h-8 w-8" />
+        </div>
+        <h1 class="text-2xl font-extrabold leading-tight text-foreground md:text-3xl lg:text-4xl">{brand.h1}</h1>
+        <p class="text-base leading-relaxed text-muted-foreground md:text-lg">{brand.intro}</p>
+        <div class="flex flex-col gap-3 sm:flex-row">
+          <a href={SITE.telLink} class="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-bold text-white shadow-md transition-colors hover:bg-orange-600">
+            <ServiceIcon name="phone" class="h-4 w-4" />
+            تماس با آمل سرویس: <span dir="ltr">{SITE.phoneDisplay}</span>
+          </a>
+          <a href={SITE.whatsappLink} target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 rounded-xl border border-green-200 bg-green-50 px-5 py-3 text-sm font-bold text-green-700 transition-colors hover:bg-green-100">
+            <ServiceIcon name="whatsapp" class="h-4 w-4" />
+            واتساپ
+          </a>
+        </div>
+      </div>
+      <div class="rounded-2xl border border-border bg-muted/30 p-6">
+        <ServiceImage type={brand.icon} alt={`تعمیر لوازم خانگی ${brand.name} در آمل`} class="h-[280px] w-full md:h-[320px]" />
+      </div>
+    </div>
+  </section>
+
+  <section class="container-app section-pad">
+    <SectionHeading title={`دستگاه‌های قابل تعمیر ${brand.name}`} subtitle="انواع لوازم خانگی این برند که عیب‌یابی و تعمیر می‌شوند" />
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+      {brand.devices.map((device) => (
+        <div class="flex items-center gap-2.5 rounded-lg border border-border bg-card p-4 shadow-sm">
+          <ServiceIcon name="check-circle" class="h-5 w-5 flex-shrink-0 text-green-600" />
+          <span class="text-sm font-medium text-foreground">{device}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="bg-muted/50 py-12 md:py-16">
+    <div class="container-app">
+      <SectionHeading title={`مشکلات متداول لوازم خانگی ${brand.name}`} subtitle="شایع‌ترین خرابی‌هایی که در دستگاه‌های این برند دیده می‌شود" />
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {brand.problems.map((problem) => (
+          <div class="flex items-start gap-3 rounded-lg border border-border bg-card p-4 shadow-sm">
+            <ServiceIcon name="alert-triangle" class="mt-0.5 h-5 w-5 flex-shrink-0 text-accent" />
+            <p class="text-sm leading-relaxed text-muted-foreground">{problem}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="container-app section-pad">
+    <div class="mx-auto max-w-3xl rounded-xl border border-blue-200 bg-blue-50 p-6">
+      <div class="mb-3 flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 text-blue-700">
+          <ServiceIcon name="info" class="h-5 w-5" />
+        </div>
+        <h2 class="text-xl font-bold text-foreground">نکات فنی درباره {brand.name}</h2>
+      </div>
+      <p class="text-sm leading-relaxed text-foreground/80">{brand.notes}</p>
+    </div>
+  </section>
+
+  <FAQ items={faqs} title={`سوالات متداول درباره تعمیر لوازم خانگی ${brand.name}`} />
+
+  <section class="bg-muted/50 py-12 md:py-16">
+    <div class="container-app space-y-8">
+      <div>
+        <h2 class="mb-5 text-xl font-bold text-foreground md:text-2xl">خدمات مرتبط</h2>
+        <div class="flex flex-wrap gap-3">
+          {SERVICES.map((s) => (
+            <a href={`/${s.slug}/`} class="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground/80 transition-colors hover:border-secondary hover:text-secondary">
+              <ServiceIcon name={s.icon} class="h-4 w-4" />
+              {s.title}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {relatedTvBrands.length > 0 && (
+        <div>
+          <h2 class="mb-5 text-xl font-bold text-foreground md:text-2xl">تعمیر تلویزیون {brand.name}</h2>
+          <div class="flex flex-wrap gap-3">
+            {relatedTvBrands.map((t) => (
+              <a href={`/${t.slug}/`} class="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground/80 transition-colors hover:border-secondary hover:text-secondary">
+                <ServiceIcon name="tv" class="h-4 w-4" />
+                {t.h1}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div>
+        <h2 class="mb-5 text-xl font-bold text-foreground md:text-2xl">مناطق تحت پوشش</h2>
+        <div class="flex flex-wrap gap-3">
+          {CITIES.map((city) => (
+            <a href={`/${city.slug}/`} class="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground/80 transition-colors hover:border-secondary hover:text-secondary">
+              <ServiceIcon name="map-pin" class="h-4 w-4" />
+              {city.name}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {relatedPosts.length > 0 && (
+        <div>
+          <h2 class="mb-5 text-xl font-bold text-foreground md:text-2xl">مقالات مرتبط</h2>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {relatedPosts.map((post) => (
+              <a href={`/blog/${post.slug}/`} class="group flex flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-all hover:shadow-md">
+                <div class="aspect-[3/2] bg-primary/5">
+                  <ServiceImage type={post.image} alt={post.title} class="h-full w-full" />
+                </div>
+                <div class="p-4">
+                  <span class="text-xs font-semibold text-secondary">{post.category}</span>
+                  <h3 class="mt-1 text-sm font-bold text-foreground group-hover:text-secondary">{post.title}</h3>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div>
+        <h2 class="mb-5 text-xl font-bold text-foreground md:text-2xl">برندهای دیگر</h2>
+        <div class="flex flex-wrap gap-3">
+          {relatedBrands.map((b) => (
+            <a href={`/brands/${b.slug}/`} class="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground/80 transition-colors hover:border-secondary hover:text-secondary">
+              <ServiceIcon name={b.icon} class="h-4 w-4" />
+              {b.name}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CTASection
+    title={`آیا لوازم خانگی ${brand.name} شما نیاز به تعمیر دارد؟`}
+    description="همین حالا تماس بگیرید یا در واتساپ پیام بدهید تا درخواست تعمیر شما ثبت شود."
+  />
+</Layout>

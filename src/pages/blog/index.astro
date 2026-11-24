@@ -1,0 +1,68 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import ServiceImage from '../../components/ServiceImage.astro';
+import { ALL_BLOG_POSTS as BLOG_POSTS } from '../../data/site';
+
+const persianMonths: Record<string, string> = {
+  '01': 'فروردین', '02': 'اردیبهشت', '03': 'خرداد', '04': 'تیر',
+  '05': 'مرداد', '06': 'شهریور', '07': 'مهر', '08': 'آبان',
+  '09': 'آذر', '10': 'دی', '11': 'بهمن', '12': 'اسفند',
+};
+
+function formatDate(dateStr: string): string {
+  const [y, m] = dateStr.split('-');
+  return `${persianMonths[m] || ''} ${y}`;
+}
+
+const categories = [...new Set(BLOG_POSTS.map((p) => p.category))];
+---
+
+<Layout
+  title="مقالات آموزشی | آمل سرویس"
+  description="مقالات آموزشی درباره نگهداری، عیب‌یابی و تعمیر لوازم خانگی. نکات کاربردی برای یخچال، لباسشویی، کولر گازی، پکیج، تلویزیون و مایکروویو."
+>
+  <Breadcrumb items={[{ label: 'مقالات' }]} />
+
+  <section class="container-app pt-6 md:pt-8">
+    <div class="mx-auto max-w-3xl space-y-4 text-center">
+      <h1 class="text-2xl font-extrabold leading-tight text-foreground md:text-3xl lg:text-4xl">مقالات آموزشی</h1>
+      <p class="text-base leading-relaxed text-muted-foreground md:text-lg">
+        نکات کاربردی برای نگهداری، عیب‌یابی اولیه و آشنایی با مشکلات متداول لوازم خانگی
+      </p>
+    </div>
+
+    <div class="mt-6 flex flex-wrap items-center justify-center gap-2">
+      <span class="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white">همه مقالات</span>
+      {categories.map((cat) => (
+        <span class="rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-muted-foreground">{cat}</span>
+      ))}
+    </div>
+  </section>
+
+  <section class="container-app section-pad">
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {BLOG_POSTS.map((post) => (
+        <a href={`/blog/${post.slug}/`} class="group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all hover:shadow-md">
+          <div class="aspect-[3/2] bg-primary/5">
+            <ServiceImage type={post.image} alt={post.title} class="h-full w-full" />
+          </div>
+          <div class="flex flex-1 flex-col p-5">
+            <div class="mb-2 flex items-center gap-2">
+              <span class="rounded-md bg-secondary/10 px-2.5 py-1 text-xs font-semibold text-secondary">{post.category}</span>
+              <span class="text-xs text-muted-foreground">{formatDate(post.date)}</span>
+            </div>
+            <h2 class="text-base font-bold leading-snug text-foreground group-hover:text-secondary">{post.title}</h2>
+            <p class="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground line-clamp-3">{post.excerpt}</p>
+            <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-accent">
+              مطالعه مقاله
+              <svg class="h-4 w-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+              </svg>
+            </span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+</Layout>
